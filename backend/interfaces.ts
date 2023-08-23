@@ -19,5 +19,10 @@ export interface chartPrice {
 export interface priceStatistics {
   min: number;
   max: number;
-  hasNegativePrice: boolean;
+  avg: number;
+}
+
+export interface timeRange {
+  startTimeStamp: number;
+  endTimeStamp: number;
 }
