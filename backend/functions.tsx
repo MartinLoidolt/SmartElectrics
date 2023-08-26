@@ -20,13 +20,6 @@ export function mapAwattarPricesToChartPrices(awattarPrices: awattarPrice[]): ch
     });
 }
 
-export function mapAwattarPriceToUnit(price: number): number {
-
-    console.log(price);
-
-    return Math.round((price / 10) * 100 * 1.2 + 14.4) / 100;
-}
-
 export function getPriceStatisticsFromAwattarPrices(awattarPrices: awattarPrice[]): priceStatistics {
     let max = Math.max(...awattarPrices.map(value => value.marketprice));
     let min = Math.min(...awattarPrices.map(value => value.marketprice));
@@ -37,9 +30,9 @@ export function getPriceStatisticsFromAwattarPrices(awattarPrices: awattarPrice[
     let avg = sum / awattarPrices.length;
 
     return {
-        max: max,
-        min: min,
-        avg: avg
+        max: parseFloat(max.toFixed(2)),
+        min: parseFloat(min.toFixed(2)),
+        avg: parseFloat(avg.toFixed(2))
     };
 }
 
@@ -56,8 +49,6 @@ export function getSelectedMonthFromAwattarPrices(awattarPrices: awattarPrice[],
     const currentMonthPrices = awattarPrices.filter(awattarPrice => {
         return awattarPrice.start_timestamp >= selectedMonthTimeRange.startTimeStamp && awattarPrice.end_timestamp <= selectedMonthTimeRange.endTimeStamp;
     });
-
-    console.log(currentMonthPrices);
 
     return currentMonthPrices;
 }
@@ -77,6 +68,8 @@ export async function loadAwattarPricesWithTimeRange(selectedDate: Date, awattar
     const currentDate = new Date();
     const loadedTimeRange = getTimeRangeFromAwattarPrices(awattarPrices);
 
+    let newAwattarPrices: awattarPrice[] = [];
+
     if (!loadedTimeRange) {
         let firstDateOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1, 0, 0, 0, 0);
         let tomorrow = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1, 23, 59, 59, 999);
@@ -88,8 +81,6 @@ export async function loadAwattarPricesWithTimeRange(selectedDate: Date, awattar
 
     const loadedTimeRangeStart = new Date(loadedTimeRange.startTimeStamp);
     const loadedTimeRangeEnd = new Date(loadedTimeRange.endTimeStamp);
-
-    let newAwattarPrices: awattarPrice[];
 
     if (selectedDate.getTime() < new Date(loadedTimeRangeStart.getFullYear(), loadedTimeRangeStart.getMonth() - 1, loadedTimeRangeStart.getDate()).getTime() ||
         selectedDate.getTime() > new Date(loadedTimeRangeEnd.getFullYear(), loadedTimeRangeEnd.getMonth() + 1, loadedTimeRangeEnd.getDate()).getTime()
@@ -105,9 +96,7 @@ export async function loadAwattarPricesWithTimeRange(selectedDate: Date, awattar
 
     } else {
 
-        console.log("IN HINZUFÜGEN");
-
-        if (selectedDate.getTime() < loadedTimeRangeStart) {
+        if (selectedDate.getTime() < loadedTimeRangeStart.getTime()) {
             let firstDateOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1, 0, 0, 0, 0);
 
             newAwattarPrices = await loadPrices(
@@ -118,7 +107,7 @@ export async function loadAwattarPricesWithTimeRange(selectedDate: Date, awattar
             newAwattarPrices = newAwattarPrices.concat(awattarPrices);
 
         } else {
-            if (selectedDate.getTime() > loadedTimeRangeEnd) {
+            if (selectedDate.getTime() > loadedTimeRangeEnd.getTime()) {
                 let lastDateOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0, 23, 59, 59, 999);
 
                 newAwattarPrices = await loadPrices(

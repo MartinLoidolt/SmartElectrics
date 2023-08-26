@@ -13,7 +13,10 @@ export const StyleGuidelines = {
 export const globalStyles = StyleSheet.create({
   h1: {
     fontWeight: "bold",
-    fontSize: 14
+    fontSize: 18
+  },
+  text: {
+    fontSize: 16
   }
 });
 

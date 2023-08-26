@@ -3,7 +3,7 @@ import {globals, globalStyles} from "../globals/globals";
 import {
     getPriceStatisticsFromAwattarPrices,
     getSelectedDayFromAwattarPrices,
-    getSelectedMonthFromAwattarPrices, mapAwattarPriceToUnit
+    getSelectedMonthFromAwattarPrices
 } from "../backend/functions";
 import {awattarPrice, priceStatistics} from "../backend/interfaces";
 
@@ -19,17 +19,29 @@ export default function(props: priceStatisticsProps) {
 
     return (
         <View style={styles.statisticsContainer}>
-            <View style={styles.statisticsMonthly}>
-                <Text style={globalStyles.h1}>{props.selectedDate.toLocaleDateString("de-AT", {month: "long"})} {globals.priceUnit}</Text>
-                <Text>Max: {mapAwattarPriceToUnit(monthlyStatistics.max)}</Text>
-                <Text>Min: {mapAwattarPriceToUnit(monthlyStatistics.min)}</Text>
-                <Text>Avg: {mapAwattarPriceToUnit(monthlyStatistics.avg)}</Text>
+            <View style={styles.statisticFirstRow}>
+                <Text style={globalStyles.h1}>Stats</Text>
+                <Text style={globalStyles.text}>Maximum:</Text>
+                <Text style={globalStyles.text}>Minimum:</Text>
+                <Text style={globalStyles.text}>Mittelwert:</Text>
             </View>
-            <View style={styles.statisticsToday}>
-                <Text style={globalStyles.h1}>Heute {globals.priceUnit}</Text>
-                <Text>Max: {mapAwattarPriceToUnit(dailyStatistics.max)}</Text>
-                <Text>Min: {mapAwattarPriceToUnit(dailyStatistics.min)}</Text>
-                <Text>Avg: {mapAwattarPriceToUnit(dailyStatistics.avg)}</Text>
+            <View style={styles.statisticRow}>
+                <Text style={globalStyles.h1}>{props.selectedDate.toLocaleDateString("de-AT", {month: "long"})}</Text>
+                <Text style={globalStyles.text}>{monthlyStatistics.max}</Text>
+                <Text style={globalStyles.text}>{monthlyStatistics.min}</Text>
+                <Text style={globalStyles.text}>{monthlyStatistics.avg}</Text>
+            </View>
+            <View style={styles.statisticRow}>
+                <Text style={globalStyles.h1}>Heute</Text>
+                <Text style={globalStyles.text}>{dailyStatistics.max}</Text>
+                <Text style={globalStyles.text}>{dailyStatistics.min}</Text>
+                <Text style={globalStyles.text}>{dailyStatistics.avg}</Text>
+            </View>
+            <View style={styles.statisticRow}>
+                <Text style={globalStyles.h1}>Einheit</Text>
+                <Text style={globalStyles.text}>{globals.priceUnit}</Text>
+                <Text style={globalStyles.text}>{globals.priceUnit}</Text>
+                <Text style={globalStyles.text}>{globals.priceUnit}</Text>
             </View>
         </View>
     );
@@ -37,16 +49,20 @@ export default function(props: priceStatisticsProps) {
 
 const styles = StyleSheet.create({
     statisticsContainer: {
+        flex: 1,
+        height: "100%",
         width: "100%",
         flexDirection: "row",
-        justifyContent: "space-evenly"
+        justifyContent: "space-between",
     },
-    statisticsMonthly: {
+    statisticFirstRow: {
+        flex: 5,
         width: "100%",
-        flex: 1,
+        justifyContent: "space-evenly",
     },
-    statisticsToday: {
+    statisticRow: {
+        flex: 4,
         width: "100%",
-        flex: 1,
-    }
+        justifyContent: "space-evenly",
+    },
 });
