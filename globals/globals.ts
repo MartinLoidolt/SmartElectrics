@@ -1,9 +1,24 @@
-export const StyleGuidelines = {
-  appMargin: 10,
-  borderWidth: 2,
-  borderRadius: 3,
-  smallFontSize: 12,
-  mediumFontSize: 14,
-  bigFontSize: 18,
-  disabledOpacityInPercent: 60,
+import {StyleSheet} from "react-native";
+
+export const globals = {
+  priceUnit: "(Cent/kWh)",
+  tax: 1.2,
+  providerCost: 1.44, //in cent per kWh
 };
+
+export const StyleGuidelines = {
+  appMargin: 18,
+  chartYAxisLabelWidth: 25,
+  chartInitialSpacingStartEnd: 8,
+};
+
+export const globalStyles = StyleSheet.create({
+  h1: {
+    fontWeight: "bold",
+    fontSize: 18
+  },
+  text: {
+    fontSize: 16
+  }
+});
+
