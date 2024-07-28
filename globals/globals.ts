@@ -1,7 +1,9 @@
 import {StyleSheet} from "react-native";
 
 export const globals = {
-  priceUnit: "(Cent/kWh)"
+  priceUnit: "(Cent/kWh)",
+  tax: 1.2,
+  providerCost: 1.44, //in cent per kWh
 };
 
 export const StyleGuidelines = {

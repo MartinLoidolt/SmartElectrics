@@ -9,10 +9,10 @@ export async function loadPrices(startTimestamp: number, endTimestamp: number) {
 
     let mappedAwattarPrices: awattarPrice[] = awattarPrices.map(value => {
         return {
-          marketprice: Math.round((value.marketprice / 10) * 100 * 1.2 + 14.4) / 100,
-          unit: globals.priceUnit,
-          start_timestamp: value.start_timestamp,
-          end_timestamp: value.end_timestamp
+            marketprice: Math.round((value.marketprice / 10) * 100 * globals.tax + globals.providerCost * 100) / 100,
+            unit: globals.priceUnit,
+            start_timestamp: value.start_timestamp,
+            end_timestamp: value.end_timestamp
         };
     });
 

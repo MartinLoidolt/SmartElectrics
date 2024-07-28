@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View} from "react-native";
 import {globals, globalStyles} from "../globals/globals";
 import {
-    getPriceStatisticsFromAwattarPrices,
+    getPriceStatisticsFromNumberArray,
     getSelectedDayFromAwattarPrices,
     getSelectedMonthFromAwattarPrices
 } from "../backend/functions";
@@ -12,27 +12,29 @@ type priceStatisticsProps = {
     selectedDate: Date;
 };
 
-export default function(props: priceStatisticsProps) {
+export default function (props: priceStatisticsProps) {
 
-    const monthlyStatistics: priceStatistics = getPriceStatisticsFromAwattarPrices(getSelectedMonthFromAwattarPrices(props.awattarPrices, props.selectedDate));
-    const dailyStatistics: priceStatistics = getPriceStatisticsFromAwattarPrices(getSelectedDayFromAwattarPrices(props.awattarPrices, props.selectedDate));
+    const monthlyStatistics: priceStatistics = getPriceStatisticsFromNumberArray(getSelectedMonthFromAwattarPrices(props.awattarPrices, props.selectedDate).map(value => value.marketprice));
+    const dailyStatistics: priceStatistics = getPriceStatisticsFromNumberArray(getSelectedDayFromAwattarPrices(props.awattarPrices, props.selectedDate).map(value => value.marketprice));
 
     return (
         <View style={styles.statisticsContainer}>
-            <View style={styles.statisticFirstRow}>
+            <View style={styles.statisticRow}>
                 <Text style={globalStyles.h1}>Stats</Text>
-                <Text style={globalStyles.text}>Maximum:</Text>
-                <Text style={globalStyles.text}>Minimum:</Text>
-                <Text style={globalStyles.text}>Mittelwert:</Text>
+                <Text style={globalStyles.text}>Max:</Text>
+                <Text style={globalStyles.text}>Min:</Text>
+                <Text style={globalStyles.text}>Avg:</Text>
             </View>
             <View style={styles.statisticRow}>
-                <Text style={globalStyles.h1}>{props.selectedDate.toLocaleDateString("de-AT", {month: "long"})}</Text>
+                <Text
+                    style={globalStyles.h1}>{props.selectedDate.toLocaleDateString("de-AT", {month: "long"})}</Text>
                 <Text style={globalStyles.text}>{monthlyStatistics.max}</Text>
                 <Text style={globalStyles.text}>{monthlyStatistics.min}</Text>
                 <Text style={globalStyles.text}>{monthlyStatistics.avg}</Text>
             </View>
             <View style={styles.statisticRow}>
-                <Text style={globalStyles.h1}>Heute</Text>
+                <Text
+                    style={globalStyles.h1}>{props.selectedDate.toLocaleDateString("de-AT", {dateStyle: "short"})}</Text>
                 <Text style={globalStyles.text}>{dailyStatistics.max}</Text>
                 <Text style={globalStyles.text}>{dailyStatistics.min}</Text>
                 <Text style={globalStyles.text}>{dailyStatistics.avg}</Text>
@@ -53,16 +55,11 @@ const styles = StyleSheet.create({
         height: "100%",
         width: "100%",
         flexDirection: "row",
-        justifyContent: "space-between",
-    },
-    statisticFirstRow: {
-        flex: 5,
-        width: "100%",
-        justifyContent: "space-evenly",
     },
     statisticRow: {
-        flex: 4,
-        width: "100%",
+        flexGrow: 1,
+        alignItems: "center",
         justifyContent: "space-evenly",
     },
+
 });

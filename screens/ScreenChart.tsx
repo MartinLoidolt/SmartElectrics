@@ -11,12 +11,12 @@ import {Button} from "@rneui/base";
 import {colorPrimary} from "../globals/colors";
 import PriceChart from "../components/PriceChart";
 import {StyleGuidelines} from "../globals/globals";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {
     loadAwattarPricesWithTimeRange,
     getSelectedDayFromAwattarPrices, getTimeRangeFromAwattarPrices,
     mapAwattarPricesToChartPrices
 } from "../backend/functions";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
 import PriceStatistics from "../components/PriceStatistics";
 
 const flexSizes = {
@@ -30,6 +30,7 @@ const flexSizes = {
 export default function () {
     const [awattarPrices, setAwattarPrices] = useState<awattarPrice[]>([]);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [isDatePickerVisible, setIsDatePickerVisible] = useState<boolean>(false);
 
     const insets = useSafeAreaInsets();
 
@@ -110,25 +111,43 @@ export default function () {
                 <View style={styles.chartDate}>
                     <Button
                         color={colorPrimary}
+                        buttonStyle={styles.button}
                         icon={{name: "chevron-left", type: "font-awesome-5", size: 15}}
                         onPress={() => {
                             changeDate("backward");
                         }}
                     />
-                    <RNDateTimePicker
-                        value={selectedDate}
+                    <Button
+                        size="md"
+                        buttonStyle={styles.dateButton}
+                        titleStyle={styles.dateTitle}
+                        type="outline"
+                        title={selectedDate.toDateString()}
+                        onPress={() => {
+                            setIsDatePickerVisible(true);
+                        }}
+                    />
+                    <DateTimePickerModal
+                        date={selectedDate}
+                        isVisible={isDatePickerVisible}
                         minimumDate={new Date(2013, 11, 21)}
                         maximumDate={getMaximumDate()}
-                        onChange={(event, date) => {
-                            console.log("ONCHANGE");
+                        mode="date"
+                        display="inline"
+                        accentColor={colorPrimary}
+                        onConfirm={(date: Date) => {
                             if (date) {
                                 changeDate("picker", date);
                             }
+                            setIsDatePickerVisible(false);
                         }}
-
+                        onCancel={() => {
+                            setIsDatePickerVisible(false);
+                        }}
                     />
                     <Button
                         color={colorPrimary}
+                        buttonStyle={styles.button}
                         icon={{name: "chevron-right", type: "font-awesome-5", size: 15}}
                         disabled={isForwardButtonDisabled()}
                         onPress={() => {
@@ -176,4 +195,15 @@ const styles = StyleSheet.create({
         flex: flexSizes.stats,
         width: "100%"
     },
+    button: {
+        height: 45
+    },
+    dateButton: {
+        height: 45,
+        borderWidth: 2,
+        borderColor: colorPrimary
+    },
+    dateTitle: {
+        color: colorPrimary
+    }
 });

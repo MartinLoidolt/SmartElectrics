@@ -15,19 +15,20 @@ export function mapAwattarPricesToChartPrices(awattarPrices: awattarPrice[]): ch
                     hour: "2-digit",
                     minute: "2-digit",
                 }),
-            labelComponent: () => {},
+            labelComponent: () => {
+            },
         };
     });
 }
 
-export function getPriceStatisticsFromAwattarPrices(awattarPrices: awattarPrice[]): priceStatistics {
-    let max = Math.max(...awattarPrices.map(value => value.marketprice));
-    let min = Math.min(...awattarPrices.map(value => value.marketprice));
+export function getPriceStatisticsFromNumberArray(prices: number[]): priceStatistics {
+    let max = Math.max(...prices);
+    let min = Math.min(...prices);
     let sum = 0;
 
-    awattarPrices.forEach(value => sum += value.marketprice);
+    prices.forEach(value => sum += value);
 
-    let avg = sum / awattarPrices.length;
+    let avg = sum / prices.length;
 
     return {
         max: parseFloat(max.toFixed(2)),
@@ -37,8 +38,8 @@ export function getPriceStatisticsFromAwattarPrices(awattarPrices: awattarPrice[
 }
 
 export function getTimeRangeOfSelectedMonth(selectedDate: Date): timeRange {
-    let monthStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1, 0,0,0,0).getTime();
-    let monthEnd = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0, 23,59,59,999).getTime();
+    let monthStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1, 0, 0, 0, 0).getTime();
+    let monthEnd = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0, 23, 59, 59, 999).getTime();
 
     return {startTimeStamp: monthStart, endTimeStamp: monthEnd};
 }
@@ -54,8 +55,8 @@ export function getSelectedMonthFromAwattarPrices(awattarPrices: awattarPrice[],
 }
 
 export function getSelectedDayFromAwattarPrices(awattarPrices: awattarPrice[], selectedDate: Date): awattarPrice[] {
-    const currentDayStart = selectedDate.setHours(0,0,0,0);
-    const currentDayEnd = selectedDate.setHours(23,59,59,999) + 1;
+    const currentDayStart = selectedDate.setHours(0, 0, 0, 0);
+    const currentDayEnd = selectedDate.setHours(23, 59, 59, 999) + 1;
 
     const currentDayPrices = awattarPrices.filter(awattarPrice => {
         return awattarPrice.start_timestamp >= currentDayStart && awattarPrice.end_timestamp <= currentDayEnd;
@@ -65,12 +66,12 @@ export function getSelectedDayFromAwattarPrices(awattarPrices: awattarPrice[], s
 }
 
 export async function loadAwattarPricesWithTimeRange(selectedDate: Date, awattarPrices: awattarPrice[]): Promise<awattarPrice[]> {
-    const currentDate = new Date();
     const loadedTimeRange = getTimeRangeFromAwattarPrices(awattarPrices);
 
     let newAwattarPrices: awattarPrice[] = [];
 
     if (!loadedTimeRange) {
+        console.log("Keine TimeRange vorhanden");
         let firstDateOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1, 0, 0, 0, 0);
         let tomorrow = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1, 23, 59, 59, 999);
 
@@ -85,7 +86,7 @@ export async function loadAwattarPricesWithTimeRange(selectedDate: Date, awattar
     if (selectedDate.getTime() < new Date(loadedTimeRangeStart.getFullYear(), loadedTimeRangeStart.getMonth() - 1, loadedTimeRangeStart.getDate()).getTime() ||
         selectedDate.getTime() > new Date(loadedTimeRangeEnd.getFullYear(), loadedTimeRangeEnd.getMonth() + 1, loadedTimeRangeEnd.getDate()).getTime()
     ) {
-
+        console.log("Weiter Enfernt als ein Monat");
         let firstDateOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1, 0, 0, 0, 0);
         let lastDateOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0, 23, 59, 59, 999);
 
@@ -95,8 +96,9 @@ export async function loadAwattarPricesWithTimeRange(selectedDate: Date, awattar
         );
 
     } else {
-
         if (selectedDate.getTime() < loadedTimeRangeStart.getTime()) {
+            console.log("Kleiner wie geladen aber nicht so weit enfernt");
+
             let firstDateOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1, 0, 0, 0, 0);
 
             newAwattarPrices = await loadPrices(
@@ -108,6 +110,8 @@ export async function loadAwattarPricesWithTimeRange(selectedDate: Date, awattar
 
         } else {
             if (selectedDate.getTime() > loadedTimeRangeEnd.getTime()) {
+                console.log("Größer wie geladen aber nicht so weit enfernt");
+
                 let lastDateOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0, 23, 59, 59, 999);
 
                 newAwattarPrices = await loadPrices(
@@ -116,6 +120,8 @@ export async function loadAwattarPricesWithTimeRange(selectedDate: Date, awattar
                 );
 
                 newAwattarPrices = awattarPrices.concat(newAwattarPrices);
+            } else {
+                newAwattarPrices = awattarPrices;
             }
         }
     }
@@ -127,7 +133,7 @@ export function getTimeRangeFromAwattarPrices(awattarPrices: awattarPrice[]): ti
     let min;
     let max;
 
-    if(awattarPrices.length <= 0) {
+    if (awattarPrices.length <= 0) {
         return null;
     }
 
