@@ -2,15 +2,16 @@ import {useEffect, useState} from "react";
 import {
     awattarPrice,
 } from "../backend/interfaces";
+import images from "../assets/images";
 import {
     SafeAreaView,
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import {Dimensions, StyleSheet, Text, View} from "react-native";
 import {Button} from "@rneui/base";
-import {colorPrimary} from "../globals/colors";
+import {colorBlack, colorPrimary, colorWhite} from "../globals/colors";
 import PriceChart from "../components/PriceChart";
-import {StyleGuidelines} from "../globals/globals";
+import {globalStyles, StyleGuidelines} from "../globals/globals";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {
     loadAwattarPricesWithTimeRange,
@@ -18,13 +19,14 @@ import {
     mapAwattarPricesToChartPrices
 } from "../backend/functions";
 import PriceStatistics from "../components/PriceStatistics";
+import { Image, ImageContentPosition } from "expo-image";
 
 const flexSizes = {
     header: 1,
     chartContainer: 5,
     chartDate: 1,
     chart: 5,
-    stats: 2,
+    stats: 3,
 };
 
 export default function () {
@@ -87,14 +89,34 @@ export default function () {
     return (
         <SafeAreaView style={styles.noDataFoundContainer}>
             <View style={styles.header}>
-                <Text>Icons</Text>
+                <View style={styles.headerLogoView}>
+                    <Image
+                        style={styles.headerLogo}
+                        contentPosition={"top left"}
+                        source={images.logo}
+                        contentFit="contain"
+                    />
+                </View>
+                <View style={styles.headerTextView}>
+                    <Text style={styles.headerText}>Charts</Text>
+                </View>
+                <View style={styles.headerSettingsButtonView}>
+                    <Button
+                            type={"clear"}
+                            buttonStyle={{padding: 0, margin: 0, paddingHorizontal: 0, borderRadius: 0, alignSelf: "flex-end"}}
+                            icon={{name: "settings-outline", type: "ionicon", size: 32, color: colorBlack, containerStyle: {alignContent: "flex-end"}}}
+                            onPress={() => {
+                                
+                            }}
+                        />
+                </View>
             </View>
             <View style={styles.chartContainer}>
                 <View style={styles.chart}>
                     <PriceChart
                         height={
                             ((((Dimensions.get("window").height -
-                                            2 * StyleGuidelines.appMargin -
+                                            StyleGuidelines.marginTop + StyleGuidelines.marginBottom -
                                             insets.top -
                                             insets.bottom -
                                             80) /
@@ -112,7 +134,8 @@ export default function () {
                     <Button
                         color={colorPrimary}
                         buttonStyle={styles.button}
-                        icon={{name: "chevron-left", type: "font-awesome-5", size: 15}}
+                        radius={StyleGuidelines.buttonRadius}
+                        icon={{name: "chevron-left", type: "font-awesome-5", size: 15, color: colorWhite}}
                         onPress={() => {
                             changeDate("backward");
                         }}
@@ -122,7 +145,19 @@ export default function () {
                         buttonStyle={styles.dateButton}
                         titleStyle={styles.dateTitle}
                         type="outline"
-                        title={selectedDate.toDateString()}
+                        radius={StyleGuidelines.buttonRadius}
+                        title={selectedDate.toLocaleDateString("de-AT", {dateStyle: "long", month: "long"})}
+                        onPress={() => {
+                            setIsDatePickerVisible(true);
+                        }}
+                    />
+                    <Button
+                        size="md"
+                        buttonStyle={styles.dateButton}
+                        titleStyle={styles.dateTitle}
+                        type="outline"
+                        radius={StyleGuidelines.buttonRadius}
+                        title={"Täg."}
                         onPress={() => {
                             setIsDatePickerVisible(true);
                         }}
@@ -148,7 +183,8 @@ export default function () {
                     <Button
                         color={colorPrimary}
                         buttonStyle={styles.button}
-                        icon={{name: "chevron-right", type: "font-awesome-5", size: 15}}
+                        radius={StyleGuidelines.buttonRadius}
+                        icon={{name: "chevron-right", type: "font-awesome-5", size: 15, color: colorWhite}}
                         disabled={isForwardButtonDisabled()}
                         onPress={() => {
                             changeDate("forward");
@@ -165,13 +201,35 @@ export default function () {
 
 const styles = StyleSheet.create({
     noDataFoundContainer: {
-        margin: StyleGuidelines.appMargin,
+        marginTop: StyleGuidelines.marginTop,
+        marginBottom: StyleGuidelines.marginBottom,
+        marginHorizontal: StyleGuidelines.marginHorizontal,
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
     },
     header: {
         flex: flexSizes.header,
+        flexDirection: "row",
+        justifyContent: "space-between"
+    },
+    headerLogoView: {
+        flex: 2,
+    },
+    headerLogo: {
+        flex: 1,
+    },
+    headerTextView: {
+        flex: 7,
+        alignItems: "center"
+    },
+    headerText: {
+        fontWeight: "bold",
+        fontSize: 24
+    },
+    headerSettingsButtonView: {
+        flex: 2,
+        //marginTop: -8,
     },
     chartContainer: {
         flex: flexSizes.chartContainer,
@@ -182,7 +240,7 @@ const styles = StyleSheet.create({
         flex: flexSizes.chartDate,
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-evenly",
+        justifyContent: "space-between",
         zIndex: 2,
     },
     chart: {
@@ -196,7 +254,8 @@ const styles = StyleSheet.create({
         width: "100%"
     },
     button: {
-        height: 45
+        height: 45,
+        width: 45,
     },
     dateButton: {
         height: 45,

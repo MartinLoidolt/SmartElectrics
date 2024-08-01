@@ -7,9 +7,12 @@ export const globals = {
 };
 
 export const StyleGuidelines = {
-  appMargin: 18,
+  marginTop: 20,
+  marginBottom: 0,
+  marginHorizontal: 25,
   chartYAxisLabelWidth: 25,
   chartInitialSpacingStartEnd: 8,
+  buttonRadius: 15,
 };
 
 export const globalStyles = StyleSheet.create({
