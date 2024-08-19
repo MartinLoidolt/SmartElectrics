@@ -61,9 +61,9 @@ export default function (props: priceChartProps) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
+            {/*<View style={styles.header}>
                 <Text style={globalStyles.h1}>Aktueller Preis: {currentPointerProps?.pointerIndex}</Text>
-            </View>
+            </View>*/}
             {hasNegativePrices ? negativeChart(props, priceStatistics) : positiveChart(props)}
         </View>
     );
@@ -72,7 +72,7 @@ export default function (props: priceChartProps) {
 function calculateChartWidth() {
     return Math.trunc(
         Dimensions.get("window").width -
-        2 * StyleGuidelines.appMargin -
+        2 * StyleGuidelines.marginHorizontal -
         2 * StyleGuidelines.chartInitialSpacingStartEnd -
         StyleGuidelines.chartYAxisLabelWidth -
         2

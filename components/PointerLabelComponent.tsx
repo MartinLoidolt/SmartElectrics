@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from "react-native";
-import {globals} from "../globals/globals";
+import {globals, StyleGuidelines} from "../globals/globals";
 import {chartPrice} from "../backend/interfaces";
 import {colorWhite} from "../globals/colors";
 
@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.2,
         shadowRadius: 6.3,
+        borderRadius: StyleGuidelines.buttonRadius
     },
     text: {textAlign: "center"},
 });
