@@ -12,7 +12,7 @@ export const StyleGuidelines = {
   marginHorizontal: 25,
   chartYAxisLabelWidth: 25,
   chartInitialSpacingStartEnd: 8,
-  buttonRadius: 15,
+  buttonRadius: 14,
 };
 
 export const globalStyles = StyleSheet.create({
